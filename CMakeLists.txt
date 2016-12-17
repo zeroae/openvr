@@ -3,11 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 project(openvr)
 
 include_directories(src headers)
-file(GLOB api_source_files
+file(GLOB CPP_FILES
   "src/**.cpp"
-)
-file(GLOB api_public_header_files
-  "headers/*"
 )
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
@@ -20,7 +17,9 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-add_library(openvr_api STATIC ${api_source_files})
+add_library(${PROJECT_NAME} STATIC ${CPP_FILES})
 
-install(TARGETS openvr_api DESTINATION lib)
-install(FILES ${api_public_header_files} DESTINATION include)
+# Expose Projects's public includes to other projects through 
+# cache variable
+set (${PROJECT_NAME}_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/headers
+	CACHE INTERNAL "${PROJECT_NAME}: Include Directories" FORCE)
